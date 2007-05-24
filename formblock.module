@@ -1,0 +1,54 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function formblock_form_alter($form_id, &$form) {
+  if ($form_id == 'node_type_form' && isset($form['identity']['type'])) {
+    $options = array(t('Disabled'), t('Enabled'));
+    $form['formblock'] = array('#type' => 'fieldset', '#title' => t('Form block'));
+    $form['formblock']['formblock_expose'] = array(
+      '#type' => 'radios',
+      '#title' => t('Enable data entry from a block'),
+      '#default_value' => variable_get('formblock_expose_'. $form['#node_type']->type, 0),
+      '#options' => $options,
+      '#description' => t('Enable this option to make the entry form for this content type available as a block.'),
+    );
+  }
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function formblock_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      foreach (node_get_types('names') as $type => $name) {
+        if (variable_get('formblock_expose_'. $type, 0)) {
+          $blocks[$type] = array(
+            'info' => t('@name form block', array('@name' => $name)),
+          );
+        }
+      }
+      return $blocks;
+
+    case 'view':
+      return formblock_get_block($delta);
+  }
+}
+
+/**
+ * Generate a block containing a node entry form.
+ */
+function formblock_get_block($type) {
+  if (node_access('create', $type)) {
+    $form = node_add($type);
+    $types = node_get_types('names');
+    return array(
+      'subject' => t('@type form', array('@type' => $types[$type])),
+      'content' => $form,
+    );
+  }
+}
