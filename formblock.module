@@ -48,8 +48,12 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
  */
 function formblock_get_block($type) {
   if (node_access('create', $type)) {
+    // Note title before rendering of form.
+    $title = drupal_get_title();
     $form = node_add($type);
     $types = node_get_types('names');
+    // Restore title, which will have been overridden.
+    drupal_set_title($title);
     return array(
       'subject' => t('@type form', array('@type' => $types[$type])),
       'content' => $form,
