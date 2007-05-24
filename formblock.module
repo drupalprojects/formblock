@@ -7,7 +7,11 @@
 function formblock_form_alter($form_id, &$form) {
   if ($form_id == 'node_type_form' && isset($form['identity']['type'])) {
     $options = array(t('Disabled'), t('Enabled'));
-    $form['formblock'] = array('#type' => 'fieldset', '#title' => t('Form block'));
+    $form['formblock'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Form block'),
+      '#weight' => 0,
+    );
     $form['formblock']['formblock_expose'] = array(
       '#type' => 'radios',
       '#title' => t('Enable data entry from a block'),
