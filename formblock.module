@@ -4,7 +4,7 @@
 /**
  * Implementation of hook_form_alter().
  */
-function formblock_form_alter($form_id, &$form) {
+function formblock_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'node_type_form' && isset($form['identity']['type'])) {
     $options = array(t('Disabled'), t('Enabled'));
     $form['formblock'] = array(
@@ -48,6 +48,8 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
  */
 function formblock_get_block($type) {
   if (node_access('create', $type)) {
+    // Include page handler for node_add()
+    module_load_include('inc', 'node', 'node.pages');
     // Note title before rendering of form.
     $title = drupal_get_title();
     $form = node_add($type);
