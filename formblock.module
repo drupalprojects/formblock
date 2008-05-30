@@ -5,7 +5,6 @@
  * Implementation of hook_form_alter().
  */
 function formblock_form_alter($form_id, &$form) {
-  drupal_set_message($form_id);
   if ($form_id == 'node_type_form' && isset($form['identity']['type'])) {
     $options = array(t('Disabled'), t('Enabled'));
     $form['formblock'] = array(
