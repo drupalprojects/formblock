@@ -5,6 +5,7 @@
  * Implementation of hook_form_alter().
  */
 function formblock_form_alter($form_id, &$form) {
+  drupal_set_message($form_id);
   if ($form_id == 'node_type_form' && isset($form['identity']['type'])) {
     $options = array(t('Disabled'), t('Enabled'));
     $form['formblock'] = array(
@@ -29,6 +30,8 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
       $blocks = array();
+      $blocks['user_register'] = array(
+        'info' => t('User registration form'));
       foreach (node_get_types('names') as $type => $name) {
         if (variable_get('formblock_expose_'. $type, 0)) {
           $blocks[$type] = array(
@@ -39,7 +42,20 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
       return $blocks;
 
     case 'view':
-      return formblock_get_block($delta);
+      // Don't display the form to logged in users or if registration is disabled
+      if ($delta == 'user_register') {
+        global $user;
+        if (!$user->uid && variable_get('user_register', 1)) {
+          drupal_add_css(drupal_get_path('module', 'formblock'). '/formblock.css', 'module', 'all');
+          return array(
+            'subject' => t('Create new account'), 
+            'content' => drupal_get_form('user_register')
+          );
+        }
+      } else {
+        return formblock_get_block($delta);
+      }
+      
   }
 }
 
