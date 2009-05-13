@@ -29,8 +29,6 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
       $blocks = array();
-      $blocks['user_register'] = array(
-        'info' => t('User registration form'));
       foreach (node_get_types('names') as $type => $name) {
         if (variable_get('formblock_expose_'. $type, 0)) {
           $blocks[$type] = array(
@@ -38,22 +36,48 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
           );
         }
       }
+      $blocks['user_register'] = array(
+        'info' => t('User registration form'));
+      if (module_exists('contact')) {
+        $blocks['contact_site'] = array(
+          'info' => t('Site-wide contact form'));
+      }
       return $blocks;
 
     case 'view':
-      // Don't display the form to logged in users or if registration is disabled
-      if ($delta == 'user_register') {
-        global $user;
-        if (!$user->uid && variable_get('user_register', 1)) {
-          drupal_add_css(drupal_get_path('module', 'formblock'). '/formblock.css', 'module', 'all');
-          return array(
-            'subject' => t('Create new account'), 
-            'content' => drupal_get_form('user_register')
-          );
-        }
-      } else {
-        return formblock_get_block($delta);
+      switch ($delta) {
+        case 'user_register':
+          global $user;
+          // Don't display the form to logged in users or if registration is disabled
+          if (!$user->uid && variable_get('user_register', 1)) {
+            drupal_add_css(drupal_get_path('module', 'formblock'). '/formblock.css', 'module', 'all');
+            return array(
+              'subject' => t('Create new account'),
+              'content' => drupal_get_form('user_register')
+            );
+          }
+          break;
+        case 'contact_site':
+          if (user_access('access site-wide contact form') && module_exists('contact')) {
+            if (!flood_is_allowed('contact', variable_get('contact_hourly_threshold', 3))) {
+              $content = t("You cannot send more than %number messages per hour. Please try again later.", array('%number' => variable_get('contact_hourly_threshold', 3)));
+            }
+            else {
+              drupal_add_css(drupal_get_path('module', 'formblock'). '/formblock.css', 'module', 'all');
+              $content = drupal_get_form('contact_mail_page');
+            }
+            return array(
+              'subject' => t('Contact'),
+              'content' => $content,
+            );
+          }
+        default:
+          return formblock_get_block($delta);
       }
+      
+      
+        
+      
       
   }
 }
