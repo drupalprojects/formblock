@@ -1,5 +1,6 @@
 /* $Id$ */
 
+div#block-formblock-user_password_request .form-text,
 div#block-formblock-contact_site .form-text,
 div#block-formblock-user_register .form-text {
   display: block;

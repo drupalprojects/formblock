@@ -47,6 +47,10 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
           'cache' => BLOCK_NO_CACHE,
         );
       }
+      $blocks['user_password_request'] = array(
+        'info' => t('Request new password form'),
+        'cache' => BLOCK_NO_CACHE,
+      );
       return $blocks;
 
     case 'view':
@@ -59,6 +63,19 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
             return array(
               'subject' => t('Create new account'),
               'content' => drupal_get_form('user_register')
+            );
+          }
+          break;
+
+        case 'user_password_request':
+          global $user;
+          // Don't display the form to logged in users
+          if (!$user->uid) {
+            drupal_add_css(drupal_get_path('module', 'formblock'). '/formblock.css', 'module', 'all');
+            module_load_include('inc', 'user', 'user.pages');
+            return array(   
+              'subject' => t('Request new password'),
+              'content' => drupal_get_form('user_pass'),
             );
           }
           break;
