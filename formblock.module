@@ -33,14 +33,19 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
         if (variable_get('formblock_expose_'. $type, 0)) {
           $blocks[$type] = array(
             'info' => t('@name form block', array('@name' => $name)),
+            'cache' => BLOCK_NO_CACHE,
           );
         }
       }
       $blocks['user_register'] = array(
-        'info' => t('User registration form'));
+        'info' => t('User registration form'),
+        'cache' => BLOCK_NO_CACHE,
+      );
       if (module_exists('contact')) {
         $blocks['contact_site'] = array(
-          'info' => t('Site-wide contact form'));
+          'info' => t('Site-wide contact form'),
+          'cache' => BLOCK_NO_CACHE,
+        );
       }
       return $blocks;
 
