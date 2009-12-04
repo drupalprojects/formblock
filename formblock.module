@@ -6,18 +6,26 @@
  */
 function formblock_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'node_type_form' && isset($form['identity']['type'])) {
-    $options = array(t('Disabled'), t('Enabled'));
     $form['formblock'] = array(
       '#type' => 'fieldset',
       '#title' => t('Form block'),
-      '#weight' => 0,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
     );
     $form['formblock']['formblock_expose'] = array(
-      '#type' => 'radios',
+      '#type' => 'checkbox',
       '#title' => t('Enable data entry from a block'),
       '#default_value' => variable_get('formblock_expose_'. $form['#node_type']->type, 0),
-      '#options' => $options,
       '#description' => t('Enable this option to make the entry form for this content type available as a block.'),
+    );
+    $form['formblock']['formblock_show_help'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Show submission guidelines'),
+      '#default_value' => variable_get('formblock_show_help_'. $form['#node_type']->type, 0),
+      '#options' => $options,
+      '#description' => t('Enable this option to show the submission guidelines in the block above the form.'),
+      '#process' => array('formblock_dependent_process'),
+      '#dependency' => array('edit-formblock-expose' => array('1')),
     );
   }
 }
@@ -108,18 +116,54 @@ function formblock_block($op = 'list', $delta = 0, $edit = array()) {
  * Generate a block containing a node entry form.
  */
 function formblock_get_block($type) {
-  if (node_access('create', $type)) {
+  if (node_access('create', $type) && variable_get('formblock_expose_'. $type, 0)) {
     // Include page handler for node_add()
     module_load_include('inc', 'node', 'node.pages');
     // Note title before rendering of form.
     $title = drupal_get_title();
     $form = node_add($type);
-    $types = node_get_types('names');
     // Restore title, which will have been overridden.
     drupal_set_title($title);
+    $node_type = node_get_types('type', $type);
+    $help = '';
+    if (variable_get('formblock_show_help_'. $type, 0)) {
+      $help = (!empty($node_type->help) ? '<p>'. filter_xss_admin($node_type->help) .'</p>' : '');
+    }
     return array(
-      'subject' => t('@type form', array('@type' => $types[$type])),
-      'content' => $form,
+      'subject' => t('@type form', array('@type' => $node_type->name)),
+      'content' => $help . $form,
     );
   }
+}
+
+/**
+ * Process callback to add dependency to form items.
+ */
+function formblock_dependent_process($element, $edit, &$form_state, &$form) {
+  if (isset($element['#dependency'])) {
+    if (!isset($element['#dependency_count'])) {
+      $element['#dependency_count'] = 1;
+    }
+    if (!isset($element['#dependency_type'])) {
+      $element['#dependency_type'] = 'hide';
+    }
+
+    $js = array(
+      'values' => $element['#dependency'],
+      'num' => $element['#dependency_count'],
+      'type' => $element['#dependency_type'],
+    );
+
+    if (!empty($form_state['ajax'])) {
+      $form_state['js settings']['formblock']['dependent'][$element['#id']] = $js;
+    }
+    else {
+      $path = drupal_get_path('module', 'formblock');
+      drupal_add_js($path .'/formblock.js', 'module', 'header');
+      $options['formblock']['dependent'][$element['#id']] = $js;
+      drupal_add_js($options, 'setting');
+    }
+  }
+
+  return $element;
 }
