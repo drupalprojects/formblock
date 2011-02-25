@@ -1,4 +1,3 @@
-; $Id$
 name = Form block
 description = Enables the presentation of node creation forms in blocks. This is particularly useful for including forms on panels.
 core = 6.x
