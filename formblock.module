@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Implementation of hook_form_alter().
+ * Implements hook_form_alter().
  */
-function formblock_form_alter(&$form, $form_state, $form_id) {
+function formblock_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'node_type_form' && isset($form['#node_type']->type)) {
     $form['formblock'] = array(
       '#type' => 'fieldset',
