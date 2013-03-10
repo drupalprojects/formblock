@@ -34,6 +34,12 @@ function formblock_form_alter(&$form, &$form_state, $form_id) {
       ),
     );
   }
+  elseif (strpos($form_id, '_node_form') !== FALSE) {
+    // Make sure we have necessary includes.
+    if (empty($form_state['build_info']['files']) || !in_array('modules/node/node.pages.inc', $form_state['build_info']['files'])) {
+      form_load_include($form_state, 'inc', 'node', 'node.pages');
+    }
+  }
 }
 
 /**
