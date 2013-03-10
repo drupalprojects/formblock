@@ -78,28 +78,27 @@ function formblock_block_info() {
  * Implements hook_block_view().
  */
 function formblock_block_view($delta = '') {
+  $block = array();
+  $block['content']['#attached']['css'][] = drupal_get_path('module', 'formblock') . '/formblock.css';
   switch ($delta) {
     case 'user_register':
       global $user;
       // Don't display the form to logged in users or if registration is disabled
       if (!$user->uid && variable_get('user_register', 1)) {
-        drupal_add_css(drupal_get_path('module', 'formblock') . '/formblock.css', 'module', 'all');
-        return array(
-          'subject' => t('Create new account'),
-          'content' => drupal_get_form('user_register_form')
-        );
+        $block['content']['form'] = drupal_get_form('user_register_form');
+        $block['subject'] = t('Create new account');
+        return $block;
       }
       break;
     case 'user_password_request':
       global $user;
       // Don't display the form to logged in users
       if (!$user->uid) {
-        drupal_add_css(drupal_get_path('module', 'formblock') . '/formblock.css', 'module', 'all');
         module_load_include('inc', 'user', 'user.pages');
-        return array(
-          'subject' => t('Request new password'),
-          'content' => drupal_get_form('user_pass'),
-        );
+
+        $block['subject'] = t('Request new password');
+        $block['content']['form'] = drupal_get_form('user_pass');
+        return $block;
       }
       break;
     case 'contact_site':
@@ -108,14 +107,13 @@ function formblock_block_view($delta = '') {
           $content = t("You cannot send more than %number messages per hour. Please try again later.", array('%number' => variable_get('contact_hourly_threshold', 3)));
         }
         else {
-          drupal_add_css(drupal_get_path('module', 'formblock') . '/formblock.css', 'module', 'all');
           module_load_include('inc', 'contact', 'contact.pages');
           $content = drupal_get_form('contact_site_form');
         }
-        return array(
-          'subject' => t('Contact'),
-          'content' => $content,
-        );
+
+        $block['subject'] = t('Contact');
+        $block['content']['form'] = $content;
+        return $block;
       }
       break;
     default:
@@ -129,17 +127,26 @@ function formblock_block_view($delta = '') {
 function formblock_get_block($type) {
   if (node_access('create', $type) && variable_get('formblock_expose_' . $type, 0)) {
     $block = array();
+
     // Include page handler for node_add()
     module_load_include('inc', 'node', 'node.pages');
+
     // Note title before rendering of form.
     $title = drupal_get_title();
     $form = node_add($type);
+
     // Restore title, which will have been overridden.
     drupal_set_title($title, PASS_THROUGH);
+
+    // Get the help
     $node_type = node_type_load($type);
     if (variable_get('formblock_show_help_' . $type, 0)) {
       $block['content']['help'] = array('#markup' => !empty($node_type->help) ? '<p>' . filter_xss_admin($node_type->help) . '</p>' : '');
     }
+
+    // Add our CSS
+    $block['content']['#attached']['css'][] = drupal_get_path('module', 'formblock') . '/formblock.css';
+
     $block['subject'] = t('@type form', array('@type' => $node_type->name));
     $block['content']['form'] = $form;
     return $block;
