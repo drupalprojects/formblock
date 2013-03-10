@@ -91,16 +91,11 @@ function formblock_block_view($delta = '') {
       }
       break;
     case 'user_password_request':
-      global $user;
-      // Don't display the form to logged in users
-      if (!$user->uid) {
-        module_load_include('inc', 'user', 'user.pages');
+      module_load_include('inc', 'user', 'user.pages');
 
-        $block['subject'] = t('Request new password');
-        $block['content']['form'] = drupal_get_form('user_pass');
-        return $block;
-      }
-      break;
+      $block['subject'] = t('Request new password');
+      $block['content']['form'] = drupal_get_form('user_pass');
+      return $block;
     case 'contact_site':
       if (user_access('access site-wide contact form') && module_exists('contact')) {
         if (!flood_is_allowed('contact', variable_get('contact_hourly_threshold', 3))) {
