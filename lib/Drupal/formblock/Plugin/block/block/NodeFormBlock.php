@@ -10,10 +10,10 @@ use Drupal\Core\Annotation\Translation;
  * Provides a block for node forms.
  *
  * @Plugin(
-  *   id = "formblock_node",
-  *   admin_label = @Translation("Node form"),
-  *   module = "formblock"
-  * )
+ *   id = "formblock_node",
+ *   admin_label = @Translation("Node form"),
+ *   module = "node"
+ * )
  */
 class NodeFormBlock extends BlockBase {
   /**

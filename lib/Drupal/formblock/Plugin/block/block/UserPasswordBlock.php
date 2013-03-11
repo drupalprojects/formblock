@@ -10,10 +10,10 @@ use Drupal\Core\Annotation\Translation;
  * Provides a block for the password reset form.
  *
  * @Plugin(
-  *   id = "formblock_user_password",
-  *   admin_label = @Translation("Request new password form"),
-  *   module = "formblock"
-  * )
+ *   id = "formblock_user_password",
+ *   admin_label = @Translation("Request new password form"),
+ *   module = "user"
+ * )
  */
 class UserPasswordBlock extends BlockBase {
   /**

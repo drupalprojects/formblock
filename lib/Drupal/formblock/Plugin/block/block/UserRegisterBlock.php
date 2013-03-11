@@ -10,10 +10,10 @@ use Drupal\Core\Annotation\Translation;
  * Provides a block for the user registration form.
  *
  * @Plugin(
-  *   id = "formblock_user_register",
-  *   admin_label = @Translation("User registration form"),
-  *   module = "formblock"
-  * )
+ *   id = "formblock_user_register",
+ *   admin_label = @Translation("User registration form"),
+ *   module = "user"
+ * )
  */
 class UserRegisterBlock extends BlockBase {
   /**

@@ -10,10 +10,10 @@ use Drupal\Core\Annotation\Translation;
  * Provides a block for contact form.
  *
  * @Plugin(
-  *   id = "formblock_contact",
-  *   admin_label = @Translation("Site-wide contact form"),
-  *   module = "formblock"
-  * )
+ *   id = "formblock_contact",
+ *   admin_label = @Translation("Site-wide contact form"),
+ *   module = "contact"
+ * )
  */
 class ContactFormBlock extends BlockBase {
   /**
