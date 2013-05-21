@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\formblock\Plugin\block\block;
+namespace Drupal\formblock\Plugin\block;
 
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Plugin;
@@ -59,7 +59,7 @@ class NodeFormBlock extends BlockBase {
   /**
    * Implements \Drupal\block\BlockBase::build().
    */
-  public function build() {
+  public function blockBuild() {
     global $user;
     $build = array();
 
@@ -85,7 +85,7 @@ class NodeFormBlock extends BlockBase {
   /**
    * Impelements \Drupal\block\BLockBase::blockAccess().
    */
-  public function blockAccess() {
+  public function access() {
     return node_access('create', $this->configuration['type']);
   }
 }

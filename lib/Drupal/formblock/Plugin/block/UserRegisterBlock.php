@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\formblock\Plugin\block\block;
+namespace Drupal\formblock\Plugin\block;
 
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Plugin;
@@ -19,7 +19,7 @@ class UserRegisterBlock extends BlockBase {
   /**
    * Implements \Drupal\block\BlockBase::build().
    */
-  public function build() {
+  public function blockBuild() {
     $build = array();
 
     $account = entity_create('user', array());
@@ -29,9 +29,9 @@ class UserRegisterBlock extends BlockBase {
   }
 
   /**
-   *Implements \Drupal\block\BlockBase::blockAccess().
+   *Implements \Drupal\block\BlockBase::access().
    */
-  public function blockAccess() {
+  public function access() {
     return user_is_anonymous() && (config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY);
   }
 }

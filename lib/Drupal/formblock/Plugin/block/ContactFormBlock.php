@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\formblock\Plugin\block\block;
+namespace Drupal\formblock\Plugin\block;
 
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Plugin;
@@ -60,7 +60,7 @@ class ContactFormBlock extends BlockBase {
    * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
-  public function build() {
+  public function blockBuild() {
     $build = array();
 
     if (!user_access('administer contact forms')) {
@@ -101,7 +101,7 @@ class ContactFormBlock extends BlockBase {
   /**
    * Impelements \Drupal\block\BLockBase::blockAccess().
    */
-  public function blockAccess() {
+  public function access() {
     return user_access('access site-wide contact form');
   }
 }

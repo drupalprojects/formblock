@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\formblock\Plugin\block\block;
+namespace Drupal\formblock\Plugin\block;
 
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Plugin;
@@ -19,7 +19,7 @@ class UserPasswordBlock extends BlockBase {
   /**
    * Implements \Drupal\block\BlockBase::build().
    */
-  public function build() {
+  public function blockBuild() {
     $build = array();
 
     module_load_include('inc', 'user', 'user.pages');
