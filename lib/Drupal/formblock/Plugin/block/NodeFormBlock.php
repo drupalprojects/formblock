@@ -14,6 +14,9 @@ use Drupal\Core\Annotation\Translation;
  *   admin_label = @Translation("Node form"),
  *   module = "node"
  * )
+ *
+ * Note that we set module to node so that blocks will be disabled correctly
+ * when the module is disabled.
  */
 class NodeFormBlock extends BlockBase {
   /**

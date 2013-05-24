@@ -14,6 +14,9 @@ use Drupal\Core\Annotation\Translation;
  *   admin_label = @Translation("Site-wide contact form"),
  *   module = "contact"
  * )
+ *
+ * Note that we set module to contact so that blocks will be disabled correctly
+ * when the module is disabled.
  */
 class ContactFormBlock extends BlockBase {
   /**

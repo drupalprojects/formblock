@@ -14,6 +14,9 @@ use Drupal\Core\Annotation\Translation;
  *   admin_label = @Translation("Request new password form"),
  *   module = "user"
  * )
+ *
+ * Note that we set module to contact so that blocks will be disabled correctly
+ * when the module is disabled.
  */
 class UserPasswordBlock extends BlockBase {
   /**
