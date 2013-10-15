@@ -1,18 +1,19 @@
 <?php
 
-namespace Drupal\formblock\Plugin\block;
+namespace Drupal\formblock\Plugin\Block;
 
 use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Plugin;
+use Drupal\Component\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
+use Drupal\user\Form\UserPasswordForm;
 
 /**
  * Provides a block for the password reset form.
  *
- * @Plugin(
+ * @Block(
  *   id = "formblock_user_password",
  *   admin_label = @Translation("Request new password form"),
- *   module = "user"
+ *   provider = "user"
  * )
  *
  * Note that we set module to contact so that blocks will be disabled correctly
@@ -22,11 +23,10 @@ class UserPasswordBlock extends BlockBase {
   /**
    * Implements \Drupal\block\BlockBase::build().
    */
-  public function blockBuild() {
+  public function build() {
     $build = array();
 
-    module_load_include('inc', 'user', 'user.pages');
-    $build['form'] = drupal_get_form('user_pass');
+    $build['form'] = drupal_get_form(UserPasswordForm::create(\Drupal::getContainer()));
 
     return $build;
   }

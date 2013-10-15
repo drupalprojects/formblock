@@ -1,18 +1,18 @@
 <?php
 
-namespace Drupal\formblock\Plugin\block;
+namespace Drupal\formblock\Plugin\Block;
 
 use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Plugin;
+use Drupal\Component\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
 
 /**
  * Provides a block for the user registration form.
  *
- * @Plugin(
+ * @Block(
  *   id = "formblock_user_register",
  *   admin_label = @Translation("User registration form"),
- *   module = "user"
+ *   provider = "user"
  * )
  *
  * Note that we set module to contact so that blocks will be disabled correctly
@@ -22,11 +22,13 @@ class UserRegisterBlock extends BlockBase {
   /**
    * Implements \Drupal\block\BlockBase::build().
    */
-  public function blockBuild() {
+  public function build() {
     $build = array();
 
-    $account = entity_create('user', array());
-    $build['form'] = entity_get_form($account, 'register');
+    $account = \Drupal::entityManager()
+        ->getStorageController('user')
+        ->create(array());
+    $build['form'] = \Drupal::entityManager()->getForm($account, 'register');
 
     return $build;
   }
@@ -35,6 +37,6 @@ class UserRegisterBlock extends BlockBase {
    *Implements \Drupal\block\BlockBase::access().
    */
   public function access() {
-    return user_is_anonymous() && (config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY);
+    return (user_is_anonymous() && (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY));
   }
 }

@@ -1,18 +1,18 @@
 <?php
 
-namespace Drupal\formblock\Plugin\block;
+namespace Drupal\formblock\Plugin\Block;
 
 use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Plugin;
+use Drupal\Component\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
 
 /**
  * Provides a block for contact form.
  *
- * @Plugin(
+ * @Block(
  *   id = "formblock_contact",
  *   admin_label = @Translation("Site-wide contact form"),
- *   module = "contact"
+ *   provider = "contact"
  * )
  *
  * Note that we set module to contact so that blocks will be disabled correctly
@@ -22,7 +22,7 @@ class ContactFormBlock extends BlockBase {
   /**
    * Overrides \Drupal\block\BlockBase::settings().
    */
-  public function settings() {
+  public function defaultConfiguration() {
     return array(
       'category' => NULL,
     );
@@ -63,30 +63,24 @@ class ContactFormBlock extends BlockBase {
    * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
-  public function blockBuild() {
+  public function build() {
     $build = array();
 
+    // Check if flood control has been activated for sending e-mails.
     if (!user_access('administer contact forms')) {
       module_load_include('inc', 'contact', 'contact.pages');
       contact_flood_control();
     }
 
-
     if (!isset($this->configuration['category'])) {
       $categories = entity_load_multiple('contact_category');
-      $default_category = config('contact.settings')->get('default_category');
+      $default_category = \Drupal::config('contact.settings')->get('default_category');
       if (isset($categories[$default_category])) {
         $category = $categories[$default_category];
       }
       // If there are no categories, do not display the form.
       else {
-        if (user_access('administer contact forms')) {
-          drupal_set_message(t('The contact form has not been configured. <a href="@add">Add one or more categories</a> to the form.', array('@add' => url('admin/structure/contact/add'))), 'error');
-          return array();
-        }
-        else {
-          throw new NotFoundHttpException();
-        }
+        return $build;
       }
     }
     else {
@@ -95,8 +89,7 @@ class ContactFormBlock extends BlockBase {
     $message = entity_create('contact_message', array(
       'category' => $category->id(),
     ));
-
-    $build['form'] = entity_get_form($message);
+    $build['form'] = \Drupal::entityManager()->getForm($message);
 
     return $build;
   }

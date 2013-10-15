@@ -1,18 +1,19 @@
 <?php
 
-namespace Drupal\formblock\Plugin\block;
+namespace Drupal\formblock\Plugin\Block;
 
 use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Plugin;
+use Drupal\Component\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Component\Utility\Xss;
 
 /**
  * Provides a block for node forms.
  *
- * @Plugin(
+ * @Block(
  *   id = "formblock_node",
  *   admin_label = @Translation("Node form"),
- *   module = "node"
+ *   provider = "node"
  * )
  *
  * Note that we set module to node so that blocks will be disabled correctly
@@ -22,7 +23,7 @@ class NodeFormBlock extends BlockBase {
   /**
    * Overrides \Drupal\block\BlockBase::settings().
    */
-  public function settings() {
+  public function defaultConfiguration() {
     return array(
       'type' => NULL,
       'show_help' => FALSE,
@@ -62,25 +63,25 @@ class NodeFormBlock extends BlockBase {
   /**
    * Implements \Drupal\block\BlockBase::build().
    */
-  public function blockBuild() {
+  public function build() {
     global $user;
     $build = array();
 
-    $node_type = node_type_load($this->configuration['type']);
+    $node_type = entity_load('node_type', $this->configuration['type']);
 
     if ($this->configuration['show_help']) {
-      $build['help'] = array('#markup' => !empty($node_type->help) ? '<p>' . filter_xss_admin($node_type->help) . '</p>' : '');
+      $build['help'] = array('#markup' => !empty($node_type->help) ? '<p>' . Xss::filterAdmin($node_type->help) . '</p>' : '');
     }
 
     $langcode = module_invoke('language', 'get_default_langcode', 'node', $this->configuration['type']);
     $node = entity_create('node', array(
-      'uid' => $user->uid,
-      'name' => (isset($user->name) ? $user->name : ''),
+      'uid' => $user->id(),
+      'name' => $user->getUserName(),
       'type' => $this->configuration['type'],
-      'langcode' => $langcode ? $langcode : language_default()->langcode,
+      'langcode' => $langcode ? $langcode : language_default()->id,
     ));
 
-    $build['form'] = entity_get_form($node);
+    $build['form'] = \Drupal::entityManager()->getForm($node);
 
     return $build;
   }
