@@ -2,10 +2,10 @@
 
 namespace Drupal\formblock\Plugin\Block;
 
+use Drupal;
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
-use Drupal\user\Form\UserPasswordForm;
 
 /**
  * Provides a block for the password reset form.
@@ -26,7 +26,7 @@ class UserPasswordBlock extends BlockBase {
   public function build() {
     $build = array();
 
-    $build['form'] = drupal_get_form(UserPasswordForm::create(\Drupal::getContainer()));
+    $build['form'] = \Drupal::formBuilder()->getForm('Drupal\user\Form\UserPasswordForm');
 
     return $build;
   }

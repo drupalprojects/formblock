@@ -59,9 +59,6 @@ class ContactFormBlock extends BlockBase {
 
   /**
    * Implements \Drupal\block\BlockBase::build().
-   *
-   * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
-   * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function build() {
     $build = array();
