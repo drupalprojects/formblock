@@ -6,6 +6,7 @@ use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Provides a block for node forms.
@@ -76,6 +77,7 @@ class NodeFormBlock extends BlockBase {
     $langcode = module_invoke('language', 'get_default_langcode', 'node', $this->configuration['type']);
     $node = entity_create('node', array(
       'uid' => $user->id(),
+      // @TODO Fix get user name method
       'name' => $user->getUserName(),
       'type' => $this->configuration['type'],
       'langcode' => $langcode ? $langcode : language_default()->id,
@@ -89,7 +91,8 @@ class NodeFormBlock extends BlockBase {
   /**
    * Impelements \Drupal\block\BLockBase::blockAccess().
    */
-  public function access() {
+  public function access(AccountInterface $account) {
+//    @TODO Change node_access
     return node_access('create', $this->configuration['type']);
   }
 }

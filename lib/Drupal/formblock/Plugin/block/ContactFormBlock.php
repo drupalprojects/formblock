@@ -5,6 +5,7 @@ namespace Drupal\formblock\Plugin\Block;
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Provides a block for contact form.
@@ -64,7 +65,8 @@ class ContactFormBlock extends BlockBase {
     $build = array();
 
     // Check if flood control has been activated for sending e-mails.
-    if (!user_access('administer contact forms')) {
+    // @TODO Change permission check to match contact controller
+    if (!Drupal::currentUser()->hasPermission('administer contact forms')) {
       module_load_include('inc', 'contact', 'contact.pages');
       contact_flood_control();
     }
@@ -94,7 +96,7 @@ class ContactFormBlock extends BlockBase {
   /**
    * Impelements \Drupal\block\BLockBase::blockAccess().
    */
-  public function access() {
-    return user_access('access site-wide contact form');
+  public function access(AccountInterface $account) {
+    return $account->hasPermission('access site-wide contact form');
   }
 }

@@ -1,14 +1,1 @@
 <?php
-
-/**
- * Implements hook_block_alter().
- */
-function formblock_block_alter(&$definitions) {
-  $mh = drupal_container()->get('module_handler');
-  if (!$mh->moduleExists('contact')) {
-    unset($definitions['formblock_contact']);
-  }
-  if (!$mh->moduleExists('node')) {
-    unset($definitions['formblock_node']);
-  }
-}

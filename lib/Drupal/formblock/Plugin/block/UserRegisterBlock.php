@@ -5,6 +5,7 @@ namespace Drupal\formblock\Plugin\Block;
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Provides a block for the user registration form.
@@ -36,7 +37,7 @@ class UserRegisterBlock extends BlockBase {
   /**
    *Implements \Drupal\block\BlockBase::access().
    */
-  public function access() {
+  public function access(AccountInterface $account) {
     return (user_is_anonymous() && (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY));
   }
 }
