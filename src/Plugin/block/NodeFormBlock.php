@@ -2,7 +2,6 @@
 
 namespace Drupal\formblock\Plugin\Block;
 
-use Drupal;
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Block;
 use Drupal\Core\Session\AccountInterface;
@@ -50,7 +49,7 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   protected $moduleHandler;
 
   /**
-   * The langugae manager.
+   * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface.
    */
@@ -164,9 +163,9 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   }
 
   /**
-   * Impelements \Drupal\block\BLockBase::blockAccess().
+   * Implements \Drupal\block\BLockBase::blockAccess().
    */
   public function access(AccountInterface $account) {
-    return Drupal::entityManager()->getAccessController('node')->createAccess($this->configuration['type'], $account);
+    return $this->entityManager->getAccessController('node')->createAccess($this->configuration['type'], $account);
   }
 }
