@@ -65,6 +65,12 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   /**
    * Constructs a new NodeFormBlock plugin
    *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entityManger
    *   The database connection.
    * @param \Drupal\Core\Session\AccountInterface $currentUser
@@ -76,7 +82,7 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entityFormBuilder
    *   The entity form builder.
    */
-  public function __construct(EntityManagerInterface $entityManager, AccountInterface $currentUser, ModuleHandlerInterface $moduleHandler, LanguageManagerInterface $languageManger, EntityFormBuilderInterface $entityFormBuilder, array $configuration, $plugin_id, $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, AccountInterface $currentUser, ModuleHandlerInterface $moduleHandler, LanguageManagerInterface $languageManger, EntityFormBuilderInterface $entityFormBuilder) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->setConfiguration($configuration);
 
@@ -91,7 +97,16 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new self($container->get('entity.manager'), $container->get('current_user'), $container->get('module_handler'), $container->get('language_manager'), $container->get('entity.form_builder'), $configuration, $plugin_id, $plugin_definition);
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity.manager'),
+      $container->get('current_user'),
+      $container->get('module_handler'),
+      $container->get('language_manager'),
+      $container->get('entity.form_builder')
+    );
   }
 
   /**
