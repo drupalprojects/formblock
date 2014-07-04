@@ -30,7 +30,7 @@ class UserPasswordBlock extends BlockBase implements ContainerFactoryPluginInter
   protected $formBuilder;
 
   /**
-   * Constructs a new NodeFormBlock plugin
+   * Constructs a new UserPasswordBlock plugin
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
