@@ -72,13 +72,13 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entityManger
-   *   The database connection.
+   *   The entity manager.
    * @param \Drupal\Core\Session\AccountInterface $currentUser
-   *   The current user
+   *   The current user.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *   The module handler
+   *   The module handler.
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
-   *   The language manager
+   *   The language manager.
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entityFormBuilder
    *   The entity form builder.
    */
