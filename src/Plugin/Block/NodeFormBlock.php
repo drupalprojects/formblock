@@ -178,9 +178,9 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   }
 
   /**
-   * Implements \Drupal\block\BLockBase::blockAccess().
+   * Implements \Drupal\block\BlockBase::blockAccess().
    */
-  public function access(AccountInterface $account) {
+  public function blockAccess(AccountInterface $account) {
     return $this->entityManager->getAccessController('node')->createAccess($this->configuration['type'], $account);
   }
 }

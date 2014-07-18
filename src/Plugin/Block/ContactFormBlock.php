@@ -205,9 +205,9 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
   }
 
   /**
-   * Implements \Drupal\block\BLockBase::blockAccess().
+   * Implements \Drupal\block\BlockBase::blockAccess().
    */
-  public function access(AccountInterface $account) {
+  public function blockAccess(AccountInterface $account) {
     return ($this->contactCategory->access('view', $account) && $account->hasPermission('access site-wide contact form'));
   }
 

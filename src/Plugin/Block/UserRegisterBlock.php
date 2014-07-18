@@ -96,9 +96,9 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
   }
 
   /**
-   *Implements \Drupal\block\BlockBase::access().
+   *Implements \Drupal\block\BlockBase::blockAccess().
    */
-  public function access(AccountInterface $account) {
+  public function blockAccess(AccountInterface $account) {
     return ($this->request->attributes->get('_menu_admin') || $account->isAnonymous()) && (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY);
   }
 }
