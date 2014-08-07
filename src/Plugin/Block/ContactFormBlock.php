@@ -5,7 +5,7 @@ namespace Drupal\formblock\Plugin\Block;
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Block;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Datetime\Date;
+use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Flood\FloodInterface;
@@ -70,11 +70,11 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
   protected $contactCategory;
 
   /**
-   * The date service.
+   * The date formatter service.
    *
-   * @var \Drupal\Core\Datetime\Date.
+   * @var \Drupal\Core\Datetime\DateFormatter.
    */
-  protected $dateService;
+  protected $dateFormatter;
 
   /**
    * Constructs a new ContactFormBlock plugin
@@ -95,17 +95,17 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
    *   The config factory.
    * @param \Drupal\Core\Flood\FloodInterface $flood
    *   The flood service.
-   * @param \Drupal\Core\DateTime\Date $dateService
-   *   The date service.
+   * @param \Drupal\Core\DateTime\DateFormatter $dateFormatter
+   *   The date formatter service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, AccountInterface $currentUser, EntityFormBuilderInterface $entityFormBuilder, ConfigFactoryInterface $configFactory, FloodInterface $flood, Date $dateService) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, AccountInterface $currentUser, EntityFormBuilderInterface $entityFormBuilder, ConfigFactoryInterface $configFactory, FloodInterface $flood, DateFormatter $dateFormatter) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityManager = $entityManager;
     $this->currentUser = $currentUser;
     $this->entityFormBuilder = $entityFormBuilder;
     $this->configFactory = $configFactory;
     $this->flood = $flood;
-    $this->dateService = $dateService;
+    $this->dateFormatter = $dateFormatter;
     $this->contactCategory = $this->entityManager->getStorage('contact_category')->load($this->configuration['category']);
   }
 
@@ -135,7 +135,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
       $container->get('entity.form_builder'),
       $container->get('config.factory'),
       $container->get('flood'),
-      $container->get('date')
+      $container->get('date.formatter')
     );
   }
 
@@ -222,7 +222,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
     if (!$this->flood->isAllowed('contact', $limit, $interval)) {
       return $this->t('You cannot send more than %limit messages in @interval. Try again later.', array(
         '%limit' => $limit,
-        '@interval' => $this->dateService->formatInterval($interval),
+        '@interval' => $this->dateFormatter->formatInterval($interval),
       ));
     }
     return FALSE;
