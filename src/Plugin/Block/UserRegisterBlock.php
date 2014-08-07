@@ -9,7 +9,6 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provides a block for the user registration form.
@@ -40,13 +39,6 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
   protected $entityFormBuilder;
 
   /**
-   * The request
-   *
-   * @var \Symfony\Component\HttpFoundation\Request.
-   */
-  protected $request;
-
-  /**
    * Constructs a new UserRegisterBlock plugin
    *
    * @param array $configuration
@@ -59,14 +51,11 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
    *   The entity manager.
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entityFormBuilder
    *   The entity form builder.
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The request.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, EntityFormBuilderInterface $entityFormBuilder, Request $request) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, EntityFormBuilderInterface $entityFormBuilder) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityManager = $entityManager;
     $this->entityFormBuilder = $entityFormBuilder;
-    $this->request = $request;
   }
 
   /**
@@ -78,8 +67,7 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
       $plugin_id,
       $plugin_definition,
       $container->get('entity.manager'),
-      $container->get('entity.form_builder'),
-      $container->get('request')
+      $container->get('entity.form_builder')
     );
   }
 
@@ -99,6 +87,6 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
    *Implements \Drupal\block\BlockBase::blockAccess().
    */
   public function blockAccess(AccountInterface $account) {
-    return ($this->request->attributes->get('_menu_admin') || $account->isAnonymous()) && (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY);
+    return ($account->isAnonymous()) && (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY);
   }
 }
