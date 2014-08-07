@@ -5,6 +5,7 @@ namespace Drupal\formblock\Plugin\Block;
 use Drupal\block\BlockBase;
 use Drupal\Component\Annotation\Block;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -122,7 +123,7 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   /**
    * Overrides \Drupal\block\BlockBase::blockForm().
    */
-  public function blockForm($form, &$form_state) {
+  public function blockForm($form, FormStateInterface $form_state) {
     $form['formblock_node_type'] = array(
       '#title' => t('Node type'),
       '#description' => t('Select the node type whose form will be shown in the block.'),
@@ -144,7 +145,7 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   /**
    * Overrides \Drupal\block\BlockBase::blockSubmit().
    */
-  public function blockSubmit($form, &$form_state) {
+  public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['type'] = $form_state['values']['formblock_node_type'];
     $this->configuration['show_help'] = $form_state['values']['formblock_show_help'];
   }
@@ -172,7 +173,6 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
     ));
 
     $build['form'] = $this->entityFormBuilder->getForm($node);
-
 
     return $build;
   }

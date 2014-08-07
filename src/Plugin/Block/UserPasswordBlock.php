@@ -46,7 +46,6 @@ class UserPasswordBlock extends BlockBase implements ContainerFactoryPluginInter
     $this->formBuilder = $formBuilder;
   }
 
-
   /**
    * {@inherticdoc}
    */
@@ -58,7 +57,6 @@ class UserPasswordBlock extends BlockBase implements ContainerFactoryPluginInter
       $container->get('form_builder')
     );
   }
-
 
   /**
    * Implements \Drupal\block\BlockBase::build().

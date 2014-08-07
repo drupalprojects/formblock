@@ -9,6 +9,7 @@ use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Flood\FloodInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -109,7 +110,6 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
     $this->contactCategory = $this->entityManager->getStorage('contact_category')->load($this->configuration['category']);
   }
 
-
   /**
    * Creates an instance of the plugin.
    *
@@ -139,7 +139,6 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
     );
   }
 
-
   /**
    * Overrides \Drupal\block\BlockBase::settings().
    */
@@ -152,7 +151,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * Overrides \Drupal\block\BlockBase::blockForm().
    */
-  public function blockForm($form, &$form_state) {
+  public function blockForm($form, FormStateInterface $form_state) {
     $categories = $this->entityManager->getStorage('contact_category')->loadMultiple();
 
     $options = array();
@@ -175,7 +174,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * Overrides \Drupal\block\BlockBase::blockSubmit().
    */
-  public function blockSubmit($form, &$form_state) {
+  public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['category'] = $form_state['values']['formblock_category'];
   }
 
@@ -227,5 +226,4 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
     }
     return FALSE;
   }
-
 }
