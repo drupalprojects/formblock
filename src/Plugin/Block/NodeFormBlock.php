@@ -2,8 +2,9 @@
 
 namespace Drupal\formblock\Plugin\Block;
 
-use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Block;
+use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Block\Annotation\Block;
+use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Xss;
@@ -146,8 +147,8 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
    * Overrides \Drupal\block\BlockBase::blockSubmit().
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
-    $this->configuration['type'] = $form_state['values']['formblock_node_type'];
-    $this->configuration['show_help'] = $form_state['values']['formblock_show_help'];
+    $this->configuration['type'] = $form_state->getValue('formblock_node_type');
+    $this->configuration['show_help'] = $form_state->getValue('formblock_show_help');
   }
 
   /**
@@ -181,6 +182,7 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
    * Implements \Drupal\block\BlockBase::blockAccess().
    */
   public function blockAccess(AccountInterface $account) {
-    return $this->entityManager->getAccessController('node')->createAccess($this->configuration['type'], $account);
+    $access_control_handler = $this->entityManager->getAccessControlHandler('node');
+    return $access_control_handler->createAccess($this->configuration['type'], $account);
   }
 }

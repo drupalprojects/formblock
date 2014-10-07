@@ -2,8 +2,9 @@
 
 namespace Drupal\formblock\Plugin\Block;
 
-use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Block;
+use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Block\Annotation\Block;
+use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBuilderInterface;

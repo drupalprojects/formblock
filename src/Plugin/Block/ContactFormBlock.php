@@ -2,8 +2,9 @@
 
 namespace Drupal\formblock\Plugin\Block;
 
-use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Block;
+use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Block\Annotation\Block;
+use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
@@ -64,11 +65,11 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
   protected $flood;
 
   /**
-   * The contact category that corresponds to this block.
+   * The contact_form that corresponds to this block.
    *
-   * @var \Drupal\contact\Entity\Category.
+   * @var \Drupal\contact\Entity\ContactForm
    */
-  protected $contactCategory;
+  protected $contactForm;
 
   /**
    * The date formatter service.
@@ -107,7 +108,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
     $this->configFactory = $configFactory;
     $this->flood = $flood;
     $this->dateFormatter = $dateFormatter;
-    $this->contactCategory = $this->entityManager->getStorage('contact_category')->load($this->configuration['category']);
+    $this->contactForm = $this->entityManager->getStorage('contact_form')->load($this->configuration['contact_form']);
   }
 
   /**
@@ -144,7 +145,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
    */
   public function defaultConfiguration() {
     return array(
-      'category' => NULL,
+      'contact_form' => $this->configFactory->get('contact.settings')->get('default_form'),
     );
   }
 
@@ -152,17 +153,17 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
    * Overrides \Drupal\block\BlockBase::blockForm().
    */
   public function blockForm($form, FormStateInterface $form_state) {
-    $categories = $this->entityManager->getStorage('contact_category')->loadMultiple();
+    $categories = $this->entityManager->getStorage('contact_form')->loadMultiple();
 
     $options = array();
     foreach ($categories as $category) {
-      $options[$category->id] = $category->label;
+      $options[$category->id()] = $category->label();
     }
 
-    $form['formblock_category'] = array(
+    $form['formblock_contact_form'] = array(
       '#type' => 'select',
       '#title' => t('Category'),
-      '#default_value' => $this->configuration['category'],
+      '#default_value' => $this->configuration['contact_form'],
       '#description' => t('Select the category to show.'),
       '#options' => $options,
       '#required' => TRUE,
@@ -175,7 +176,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
    * Overrides \Drupal\block\BlockBase::blockSubmit().
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
-    $this->configuration['category'] = $form_state['values']['formblock_category'];
+    $this->configuration['contact_form'] = $form_state->getValue('formblock_contact_form');
   }
 
   /**
@@ -195,7 +196,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
     $message = $this->entityManager
       ->getStorage('contact_message')
       ->create(array(
-        'category' => $this->contactCategory->id(),
+        'contact_form' => $this->contactForm->id(),
       ));
 
     $build['form'] = $this->entityFormBuilder->getForm($message);
@@ -207,7 +208,7 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
    * Implements \Drupal\block\BlockBase::blockAccess().
    */
   public function blockAccess(AccountInterface $account) {
-    return ($this->contactCategory->access('view', $account) && $account->hasPermission('access site-wide contact form'));
+    return ($this->contactForm->access('view', $account) && $account->hasPermission('access site-wide contact form'));
   }
 
   /**
