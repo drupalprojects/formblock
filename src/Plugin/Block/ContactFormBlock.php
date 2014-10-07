@@ -101,13 +101,16 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
    *   The date formatter service.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, AccountInterface $currentUser, EntityFormBuilderInterface $entityFormBuilder, ConfigFactoryInterface $configFactory, FloodInterface $flood, DateFormatter $dateFormatter) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityManager = $entityManager;
     $this->currentUser = $currentUser;
     $this->entityFormBuilder = $entityFormBuilder;
     $this->configFactory = $configFactory;
     $this->flood = $flood;
     $this->dateFormatter = $dateFormatter;
+
+    // We have to do this after our injections since the parent constructor
+    // calls defaultConfiguration() which depends on the configFactory service.
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->contactForm = $this->entityManager->getStorage('contact_form')->load($this->configuration['contact_form']);
   }
 
