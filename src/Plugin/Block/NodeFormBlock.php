@@ -170,7 +170,7 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
       'uid' => $account->id(),
       'name' => $account->getUsername() ?: '',
       'type' => $node_type->type,
-      'langcode' => $langcode ? $langcode : $this->languageManager->getCurrentLanguage()->id,
+      'langcode' => $langcode ? $langcode : $this->languageManager->getCurrentLanguage()->getId(),
     ));
 
     $build['form'] = $this->entityFormBuilder->getForm($node);
