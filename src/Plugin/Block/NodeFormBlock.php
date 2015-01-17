@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\node\Entity\NodeType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -37,27 +38,6 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   protected $entityManager;
 
   /**
-   * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountInterface.
-   */
-  protected $currentUser;
-
-  /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface.
-   */
-  protected $moduleHandler;
-
-  /**
-   * The language manager.
-   *
-   * @var \Drupal\Core\Language\LanguageManagerInterface.
-   */
-  protected $languageManager;
-
-  /**
    * The entity form builder.
    *
    * @var \Drupal\Core\Entity\EntityFormBuilderInterface.
@@ -75,23 +55,14 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entityManger
    *   The entity manager.
-   * @param \Drupal\Core\Session\AccountInterface $currentUser
-   *   The current user.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *   The module handler.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
-   *   The language manager.
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entityFormBuilder
    *   The entity form builder.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, AccountInterface $currentUser, ModuleHandlerInterface $moduleHandler, LanguageManagerInterface $languageManger, EntityFormBuilderInterface $entityFormBuilder) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, EntityFormBuilderInterface $entityFormBuilder) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->setConfiguration($configuration);
 
     $this->entityManager = $entityManager;
-    $this->currentUser = $currentUser;
-    $this->moduleHandler = $moduleHandler;
-    $this->languageManager = $languageManger;
     $this->entityFormBuilder = $entityFormBuilder;
   }
 
@@ -104,9 +75,6 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
       $plugin_id,
       $plugin_definition,
       $container->get('entity.manager'),
-      $container->get('current_user'),
-      $container->get('module_handler'),
-      $container->get('language_manager'),
       $container->get('entity.form_builder')
     );
   }
@@ -157,20 +125,14 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   public function build() {
     $build = array();
 
-    $node_type = entity_load('node_type', $this->configuration['type']);
+    $node_type = NodeType::load($this->configuration['type']);
 
     if ($this->configuration['show_help']) {
-      $build['help'] = array('#markup' => !empty($node_type->help) ? '<p>' . Xss::filterAdmin($node_type->help) . '</p>' : '');
+      $build['help'] = array('#markup' => !empty($node_type->getHelp()) ? '<p>' . Xss::filterAdmin($node_type->getHelp()) . '</p>' : '');
     }
 
-    $account = $this->currentUser;
-    $langcode = $this->moduleHandler->invoke('language', 'get_default_langcode', array('node', $node_type->type));
-
     $node = $this->entityManager->getStorage('node')->create(array(
-      'uid' => $account->id(),
-      'name' => $account->getUsername() ?: '',
-      'type' => $node_type->type,
-      'langcode' => $langcode ? $langcode : $this->languageManager->getCurrentLanguage()->getId(),
+      'type' => $node_type->id(),
     ));
 
     $build['form'] = $this->entityFormBuilder->getForm($node);
