@@ -165,9 +165,9 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
 
     $form['formblock_contact_form'] = array(
       '#type' => 'select',
-      '#title' => t('Category'),
+      '#title' => $this->t('Category'),
       '#default_value' => $this->configuration['contact_form'],
-      '#description' => t('Select the category to show.'),
+      '#description' => $this->t('Select the category to show.'),
       '#options' => $options,
       '#required' => TRUE,
     );

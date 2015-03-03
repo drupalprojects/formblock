@@ -94,8 +94,8 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
    */
   public function blockForm($form, FormStateInterface $form_state) {
     $form['formblock_node_type'] = array(
-      '#title' => t('Node type'),
-      '#description' => t('Select the node type whose form will be shown in the block.'),
+      '#title' => $this->t('Node type'),
+      '#description' => $this->t('Select the node type whose form will be shown in the block.'),
       '#type' => 'select',
       '#required' => TRUE,
       '#options' => node_type_get_names(),
@@ -103,9 +103,9 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
     );
     $form['formblock_show_help'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Show submission guidelines'),
+      '#title' => $this->t('Show submission guidelines'),
       '#default_value' => $this->configuration['show_help'],
-      '#description' => t('Enable this option to show the submission guidelines in the block above the form.'),
+      '#description' => $this->t('Enable this option to show the submission guidelines in the block above the form.'),
     );
 
     return $form;
