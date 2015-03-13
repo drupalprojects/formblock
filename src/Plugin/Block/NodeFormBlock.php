@@ -12,8 +12,6 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\node\Entity\NodeType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 
 /**
@@ -98,7 +96,7 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
       '#description' => $this->t('Select the node type whose form will be shown in the block.'),
       '#type' => 'select',
       '#required' => TRUE,
-      '#options' => node_type_get_names(),
+      '#options' => $this->getNodeTypes(),
       '#default_value' => $this->configuration['type'],
     );
     $form['formblock_show_help'] = array(
@@ -109,6 +107,17 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
     );
 
     return $form;
+  }
+
+  /**
+   * Get an arrau of node types
+   *
+   * @return array
+   */
+  protected function getNodeTypes() {
+    return array_map(function ($bundle_info) {
+      return $bundle_info['label'];
+    }, $this->entityManager->getBundleInfo('node'));
   }
 
   /**
