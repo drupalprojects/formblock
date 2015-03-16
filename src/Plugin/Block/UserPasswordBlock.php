@@ -15,7 +15,8 @@ use Drupal\Core\Form\FormBuilderInterface;
  * @Block(
  *   id = "formblock_user_password",
  *   admin_label = @Translation("Request new password form"),
- *   provider = "user"
+ *   provider = "user",
+ *   category = @Translation("Forms")
  * )
  *
  * Note that we set module to contact so that blocks will be disabled correctly

@@ -17,7 +17,8 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
  * @Block(
  *   id = "formblock_user_register",
  *   admin_label = @Translation("User registration form"),
- *   provider = "user"
+ *   provider = "user",
+ *   category = @Translation("Forms")
  * )
  *
  * Note that we set module to contact so that blocks will be disabled correctly

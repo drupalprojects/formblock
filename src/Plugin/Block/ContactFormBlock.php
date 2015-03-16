@@ -21,7 +21,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Block(
  *   id = "formblock_contact",
  *   admin_label = @Translation("Site-wide contact form"),
- *   provider = "contact"
+ *   provider = "contact",
+ *   category = @Translation("Forms")
  * )
  *
  * Note that we set module to contact so that blocks will be disabled correctly

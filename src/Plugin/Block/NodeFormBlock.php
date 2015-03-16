@@ -19,8 +19,9 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
  *
  * @Block(
  *   id = "formblock_node",
- *   admin_label = @Translation("Node form"),
- *   provider = "node"
+ *   admin_label = @Translation("Content form"),
+ *   provider = "node",
+ *   category = @Translation("Forms")
  * )
  *
  * Note that we set module to node so that blocks will be disabled correctly
