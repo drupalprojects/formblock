@@ -2,6 +2,7 @@
 
 namespace Drupal\formblock\Plugin\Block;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
@@ -209,16 +210,19 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
   }
 
   /**
-   * Implements \Drupal\block\BlockBase::blockAccess().
+   * {@inheritdoc}
    */
   public function blockAccess(AccountInterface $account) {
-    return ($this->contactForm->access('view', $account) && $account->hasPermission('access site-wide contact form'));
+    return AccessResult::allowedIf($this->contactForm->access('view', $account) && $account->hasPermission('access site-wide contact form'))
+      ->cachePerPermissions()
+      ->addCacheTags($this->contactForm->getCacheTags())
+      ->addCacheTags($this->configFactory->get('contact.settings')->getCacheTags());
   }
 
   /**
    * Returns the current status of flood control.
    *
-   * @return
+   * @return bool
    */
   protected function floodControl() {
     $limit = $this->configFactory->get('contact.settings')->get('flood.limit');

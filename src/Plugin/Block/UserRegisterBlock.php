@@ -2,6 +2,7 @@
 
 namespace Drupal\formblock\Plugin\Block;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
@@ -86,9 +87,11 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
   }
 
   /**
-   *Implements \Drupal\block\BlockBase::blockAccess().
+   * {@inheritdoc}
    */
   public function blockAccess(AccountInterface $account) {
-    return ($account->isAnonymous()) && (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY);
+    return AccessResult::allowedIf($account->isAnonymous() && (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY))
+      ->addCacheContexts(['user.roles'])
+      ->addCacheTags(\Drupal::config('user.settings')->getCacheTags());
   }
 }

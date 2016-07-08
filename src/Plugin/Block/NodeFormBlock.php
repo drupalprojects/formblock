@@ -111,7 +111,7 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   }
 
   /**
-   * Get an arrau of node types
+   * Get an array of node types
    *
    * @return array
    */
@@ -151,10 +151,20 @@ class NodeFormBlock extends BlockBase implements ContainerFactoryPluginInterface
   }
 
   /**
-   * Implements \Drupal\block\BlockBase::blockAccess().
+   * {@inheritdoc}
    */
   public function blockAccess(AccountInterface $account) {
     $access_control_handler = $this->entityManager->getAccessControlHandler('node');
-    return $access_control_handler->createAccess($this->configuration['type'], $account);
+
+    // NodeAccessControlHandler::createAccess() adds user.permissions
+    // as a cache context to the returned AccessResult
+    /** @var $result \Drupal\Core\Access\AccessResult */
+    $result = $access_control_handler->createAccess($this->configuration['type'], $account, [], TRUE);
+
+    // Add the node type as a cache dependency.
+    $node_type = $node_type = NodeType::load($this->configuration['type']);
+    $result->addCacheTags($node_type->getCacheTags());
+
+    return $result;
   }
 }
