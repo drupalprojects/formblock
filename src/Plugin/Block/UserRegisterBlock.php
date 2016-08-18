@@ -4,12 +4,10 @@ namespace Drupal\formblock\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Block\Annotation\Block;
-use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 
 /**
@@ -28,21 +26,21 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity manager
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface.
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface.
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
-   * The entity form builder
+   * The entity form builder.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface.
    */
   protected $entityFormBuilder;
 
   /**
-   * Constructs a new UserRegisterBlock plugin
+   * Constructs a new UserRegisterBlock plugin.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -50,14 +48,14 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity manager.
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entityFormBuilder
    *   The entity form builder.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entityManager, EntityFormBuilderInterface $entityFormBuilder) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, EntityFormBuilderInterface $entityFormBuilder) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityManager = $entityManager;
+    $this->entityTypeManager = $entityTypeManager;
     $this->entityFormBuilder = $entityFormBuilder;
   }
 
@@ -69,7 +67,7 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('entity.form_builder')
     );
   }
@@ -78,9 +76,9 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
    * Implements \Drupal\block\BlockBase::build().
    */
   public function build() {
-    $build = array();
+    $build = [];
 
-    $account = $this->entityManager->getStorage('user') ->create(array());
+    $account = $this->entityTypeManager->getStorage('user')->create([]);
     $build['form'] = $this->entityFormBuilder->getForm($account, 'register');
 
     return $build;
@@ -94,4 +92,5 @@ class UserRegisterBlock extends BlockBase implements ContainerFactoryPluginInter
       ->addCacheContexts(['user.roles'])
       ->addCacheTags(\Drupal::config('user.settings')->getCacheTags());
   }
+
 }
