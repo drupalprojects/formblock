@@ -67,13 +67,6 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
   protected $flood;
 
   /**
-   * The contact_form that corresponds to this block.
-   *
-   * @var \Drupal\contact\Entity\ContactForm
-   */
-  protected $contactForm;
-
-  /**
    * The date formatter service.
    *
    * @var \Drupal\Core\Datetime\DateFormatter.
@@ -113,7 +106,6 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
     // We have to do this after our injections since the parent constructor
     // calls defaultConfiguration() which depends on the configFactory service.
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->contactForm = $this->entityManager->getStorage('contact_form')->load($this->configuration['contact_form']);
   }
 
   /**
@@ -198,10 +190,12 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
       return $build;
     }
 
+
+
     $message = $this->entityManager
       ->getStorage('contact_message')
       ->create(array(
-        'contact_form' => $this->contactForm->id(),
+        'contact_form' => $this->getContactForm()->id(),
       ));
 
     $build['form'] = $this->entityFormBuilder->getForm($message);
@@ -213,9 +207,9 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   public function blockAccess(AccountInterface $account) {
-    return AccessResult::allowedIf($this->contactForm->access('view', $account) && $account->hasPermission('access site-wide contact form'))
+    return AccessResult::allowedIf($this->getContactForm()->access('view', $account) && $account->hasPermission('access site-wide contact form'))
       ->cachePerPermissions()
-      ->addCacheTags($this->contactForm->getCacheTags())
+      ->addCacheTags($this->getContactForm()->getCacheTags())
       ->addCacheTags($this->configFactory->get('contact.settings')->getCacheTags());
   }
 
@@ -234,5 +228,15 @@ class ContactFormBlock extends BlockBase implements ContainerFactoryPluginInterf
       ));
     }
     return FALSE;
+  }
+
+  /**
+   * Return the contact form entity (type of contact form).
+   *
+   * @return \Drupal\contact\Entity\ContactForm
+   *   The contact form type.
+   */
+  private function getContactForm() {
+    return $this->entityManager->getStorage('contact_form')->load($this->configuration['contact_form']);
   }
 }
