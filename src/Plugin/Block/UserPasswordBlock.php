@@ -13,7 +13,6 @@ use Drupal\Core\Form\FormBuilderInterface;
  * @Block(
  *   id = "formblock_user_password",
  *   admin_label = @Translation("Request new password form"),
- *   provider = "user",
  *   category = @Translation("Forms")
  * )
  *

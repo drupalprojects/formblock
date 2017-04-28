@@ -16,7 +16,6 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
  * @Block(
  *   id = "formblock_user_register",
  *   admin_label = @Translation("User registration form"),
- *   provider = "user",
  *   category = @Translation("Forms")
  * )
  *
